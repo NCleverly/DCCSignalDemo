@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
+using DCC;
+using DCC.FraudDection;
 
 namespace DCC.SignalR.Demo.Hubs
 {
     public class AlertHub: Hub
     {
         private readonly IConfiguration _configuration;
-        private readonly FraudDetector _detector;
+        private readonly MockDetection _detector;
 
-        public AlertingHub(IConfiguration configuration)
+        public AlertHub(IConfiguration configuration)
         {
             _configuration = configuration;
-            _detector = new FraudDetector(_configuration, _configuration.GetConnectionString(""),
-                _configuration.GetConnectionString("SqlConnection"));
+            _detector = new MockDetection(_configuration);
         }
         public async Task SendMessage(FraudUIAlerts alert)
         {

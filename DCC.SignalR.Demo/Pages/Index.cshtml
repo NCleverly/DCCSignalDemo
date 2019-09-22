@@ -5,3 +5,68 @@
 }
 
 
+<script src="lib/moment.js/moment.min.js"></script>
+
+<h3>@ViewData["confirmation"]</h3>
+<div class="container">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="row">
+            <form id="DataForm" method="post">
+                <div class="pull-right">
+                    <span colspan="3">
+                        <label class="col-md-2" style="text-align:center; height:35px; font-size:x-large"> From </label>
+                        <input type="text" name="startdate" style="height:35px" class="input-sm col-md-3" id="StartDateTimePicker" value="@Model.StartDateTimePicker.ToString("MM/dd/yyyy HH:mm")">
+                        <label class="col-md-1" style="text-align:center; height:35px; font-size:x-large"> To </label>
+                        <input type="text" name="enddate" style="height:35px;" class="input-sm col-md-3" id="EndDateTimePicker" value="@Model.EndDateTimePicker.ToString("MM/dd/yyyy HH:mm")" />
+                        <button class="btn btn-primary" style="margin:0 5px 0 20px;" id="btnApply" type="submit">Apply</button>
+                        <button class="btn btn-primary" style="margin:0 5px 0 5px;" id="btnReset" type="reset">Reset</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        <table class="table table-bordered table-responsive table-striped" id="TableAlerts">
+            <thead>
+                <tr>
+                    <th>Member Id</th>
+                    <th>Rules tripped</th>
+                    <th>ETan</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var alert in Model.Alerts)
+                {
+                    <tr id="@alert.AlertUxID">
+                        <td>@alert.MemberID</td>
+                        <td>@alert.RulesTripped</td>
+                        <td>@alert.ETan</td>
+                        <td>@alert.Timestamp.ToString("MM/dd/yyyy HH:mm")</td>
+                        <td>
+                            <button class="btn btn-primary FraudButton" data-rowId="@alert.AlertUxID">Fraud</button>
+                            <button class="btn btn-primary NonFraudButton" data-rowId="@alert.AlertUxID">Not Fraud</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="loading">Loading&#8230;</div>
+@section Scripts {
+    <!-- For the DataTables grid -->
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/jquery-datetimepicker/jquery.datetimepicker.min.css" rel="stylesheet" />
+
+
+
+    <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/js/alert.js"></script>
+}

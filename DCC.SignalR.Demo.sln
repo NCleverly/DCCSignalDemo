@@ -4,7 +4,7 @@ VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DCC.SignalR.Demo", "DCC.SignalR.Demo\DCC.SignalR.Demo.csproj", "{974C0280-B588-4A79-9A52-191B995D5E62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCC.FraudDection", "DCC.FraudDection\DCC.FraudDection.csproj", "{D76884D3-5FFC-474F-9590-0991FBF1ADD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCC.FraudDetection", "DCC.FraudDection\DCC.FraudDetection.csproj", "{D76884D3-5FFC-474F-9590-0991FBF1ADD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCC.AlertProcessor", "DCC.AlertProcessor\DCC.AlertProcessor.csproj", "{AAEE2456-2981-484F-99F8-95A8D7C4D872}"
 EndProject

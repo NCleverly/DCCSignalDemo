@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DCC.AlertProcessor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
