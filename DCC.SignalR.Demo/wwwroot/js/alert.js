@@ -4,23 +4,6 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/AlertHub").build()
 
 $(".loading").hide();
 
-$.fn.dataTable.moment = function (format, locale) {
-    var types = $.fn.dataTable.ext.type;
-    // Add type detection
-    types.detect.unshift(function (d) {
-        var dateParse = moment(d);
-        var date = moment(dateParse, format, locale, true).isValid() ?
-            'moment–' + format :
-            null;
-        return date;
-    });
-    // Add sorting method – use an integer for the sorting
-    types.order['moment–' + format + '–pre'] = function (d) {
-        return moment(d, format, locale, true).unix();
-    };
-};
-$.fn.dataTable.moment('M/D/YYYY hh:m:s');
-
 function formatDate(dateVal) {
     const newDate = new Date(dateVal);
 
@@ -57,50 +40,46 @@ function isEmptyOrSpaces(str) {
 connection.on("ReceiveMessage",
     function (MemberId, RulesTripped, eTan, timestamp, id) {
         const table = document.getElementById("TableAlerts");
-        var value = $('.dataTables_filter input').val();
-        if (!isEmptyOrSpaces(value) && value.toLowerCase() !== MemberId.toLowerCase()) {
 
-            return false;
-        } else {
-            const msg = RulesTripped.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const msg = RulesTripped.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-            const row = table.insertRow(-1);
-            const cell1 = row.insertCell(0);
-            const cell2 = row.insertCell(1);
-            const cell3 = row.insertCell(2);
-            const cell4 = row.insertCell(3);
-            const cell5 = row.insertCell(4);
-            // Add some text to the new cells:
-            row.id = id;
-            cell1.innerHTML = MemberId;
-            cell2.innerHTML = msg;
-            cell3.innerHTML = eTan;
-            cell4.innerHTML = formatDate(timestamp);
-            cell5.innerHTML = "<button class=\"btn btn-primary FraudButton" +
-                id +
-                "\" data-rowId=" +
-                id +
-                ">Fraud</button> " +
-                " <button class=\"btn btn-primary NonFraudButton" +
-                id +
-                "\" data-rowId=" +
-                id +
-                ">Not Fraud</button>";
-            $(`.DeleteButton${id}`).click(function (event) {
-                const id = this.dataset.rowid;
-                connection.invoke("RemoveMessage", id).catch(function (err) {
-                    return console.error(err.toString());
-                });
-                event.preventDefault();
+        const row = table.insertRow(-1);
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+        const cell4 = row.insertCell(3);
+        const cell5 = row.insertCell(4);
+        // Add some text to the new cells:
+        row.id = id;
+        cell1.innerHTML = MemberId;
+        cell2.innerHTML = msg;
+        cell3.innerHTML = eTan;
+        cell4.innerHTML = formatDate(timestamp);
+        cell5.innerHTML = "<button class=\"btn btn-primary FraudButton" +
+            id +
+            "\" data-rowId=" +
+            id +
+            ">Fraud</button> " +
+            " <button class=\"btn btn-primary NonFraudButton" +
+            id +
+            "\" data-rowId=" +
+            id +
+            ">Not Fraud</button>";
+        $(`.DeleteButton${id}`).click(function (event) {
+            const id = this.dataset.rowid;
+            connection.invoke("RemoveMessage", id, true).catch(function (err) {
+                return console.error(err.toString());
             });
-            $(`.NonFraudButton${id}`).click(function (event) {
-                const id = this.dataset.rowid;
-                connection.invoke("NonFraudMessage", id).catch(function (err) {
-                    return console.error(err.toString());
-                });
-                event.preventDefault();
+            event.preventDefault();
+        });
+        $(`.NonFraudButton${id}`).click(function (event) {
+            const id = this.dataset.rowid;
+            connection.invoke("RemoveMessage", id).catch(function (err) {
+                return console.error(err.toString());
             });
-        }
+            event.preventDefault();
+        });
+
     });
 $(".FraudButton").click(function (event) {
     const id = this.dataset.rowid;
@@ -121,8 +100,13 @@ $(".NonFraudButton").click(function (event) {
 
 connection.on("DeleteMessage",
     function (id) {
-        var table = $("#TableAlerts").DataTable();
-        var rows = table.row('tr#' + id).remove().draw();
+        try {
+            var rows = $('table#TableAlerts tr#' + id).remove();
+            return true;
+        }
+        catch (error) {
+            return error;
+        }
     });
 
 connection.start().catch(function (err) {
@@ -144,27 +128,6 @@ connection.onclose(async () => {
 });
 
 
-// Set up the DataTable grid
-$('#TableAlerts').DataTable({
-    "columnDefs": [
-        { "orderable": false, "targets": 1 },
-        { "orderable": false, "targets": 2 },
-        { "targets": 3, type: 'date' },
-        { "orderable": false, "targets": -1 }
-    ],
-    "order": [[3, 'asc']],
-    "pageLength": 50,
-    "lengthMenu": [[25, 50, 150, -1], [25, 50, 150, "All"]],
-    stateSave: true
-
-});
-$('#TableAlerts').on('search.dt', function () {
-    var value = $('.dataTables_filter input').val();
-    if (isEmptyOrSpaces(value)) {
-        location.reload();
-        $(".loading").show();
-    }
-});
 
 $('#btnReset').click(function () {
     $('#StartDateTimePicker').val('');
@@ -185,5 +148,5 @@ $('#EndDateTimePicker').datetimepicker({
     format: 'm/d/Y H:i',
     formatTime: 'H:i',
     step: 60
-}); 
+});
 
