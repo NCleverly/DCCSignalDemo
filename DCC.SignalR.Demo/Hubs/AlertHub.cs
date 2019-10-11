@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using DCC;
 using DCC.FraudDection;
+using DCC.FraudDetection.Models;
+using DCC.FraudDetection.Services;
 
 namespace DCC.SignalR.Demo.Hubs
 {
@@ -14,10 +16,10 @@ namespace DCC.SignalR.Demo.Hubs
         private readonly IConfiguration _configuration;
         private readonly MockDetection _detector;
 
-        public AlertHub(IConfiguration configuration)
+        public AlertHub(IConfiguration configuration, IRavenDbAccess<FraudUIAlerts> raven)
         {
             _configuration = configuration;
-            _detector = new MockDetection(_configuration);
+            _detector = new MockDetection(_configuration, raven);
         }
         public async Task SendMessage(FraudUIAlerts alert)
         {

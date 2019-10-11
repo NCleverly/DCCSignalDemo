@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace DCC.FraudDection
+namespace DCC.FraudDetection.Models
 {
     public class FraudUIAlerts
     {
+        public string id { get; set; }
         public long FraudAlertID { get; set; }
 
         public Guid? AlertUxID { get; set; }

@@ -13,7 +13,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "https://localhost:44323/"
     },
     "DCC.SignalR.Demo": {
       "commandName": "Project",
