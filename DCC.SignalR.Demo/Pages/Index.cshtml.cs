@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DCC.FraudDection;
-using DCC.FraudDetection.Models;
-using DCC.FraudDetection.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +15,10 @@ namespace DCC.SignalR.Demo.Pages
         private readonly MockDetection _detector;
 
 
-        public IndexModel(IConfiguration configuration, IRavenDbAccess<FraudUIAlerts> raven)
+        public IndexModel(IConfiguration configuration)
         {
             _configuration = configuration;
-            _detector = new MockDetection(_configuration, raven );
+            _detector = new MockDetection(_configuration);
         }
         public IList<FraudUIAlerts> Alerts { get; private set; } = new List<FraudUIAlerts>();
 

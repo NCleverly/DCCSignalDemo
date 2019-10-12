@@ -1,4 +1,4 @@
-﻿using DCC.FraudDetection.Models;
+﻿using DCC.FraudDection;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using System;

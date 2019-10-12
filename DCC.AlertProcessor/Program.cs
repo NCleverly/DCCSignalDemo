@@ -1,8 +1,5 @@
 ﻿using DCC.FraudDection;
-using DCC.FraudDetection.Models;
-using DCC.FraudDetection.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -28,16 +25,11 @@ namespace DCC.AlertProcessor
                     .AddJsonFile($"appsettings.{environmentName}.json", false, true)
                     .AddEnvironmentVariables();
 
-                IConfiguration configuration = builder.Build();
-                var serviceProvider = new ServiceCollection()
-                    .AddSingleton<IKeyVaultService, KeyVaultService>()
-                    .AddScoped<IDocumentStoreHolder, DocumentStoreHolder>().AddScoped<IRavenDbAccess<FraudUIAlerts>, FraudDataAccess>()
-                    .BuildServiceProvider();
-                var raven = serviceProvider.GetService<IRavenDbAccess<FraudUIAlerts>>();
+                IConfigurationRoot configuration = builder.Build();
 
-                MockDetection detector = new MockDetection(configuration, raven);
+                MockDetection detector = new MockDetection(configuration);
 
-                var requests = detector.GetMockData();
+                var requests = detector.GetAlerts();
                 foreach (var request in requests)
                 {
                     await detector.SendAlert(request);

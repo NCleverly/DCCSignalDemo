@@ -1,6 +1,4 @@
-﻿using DCC.FraudDetection.Models;
-using DCC.FraudDetection.Repos;
-using DCC.FraudDetection.Services;
+﻿using DCC.FraudDetection.Repos;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -12,30 +10,17 @@ namespace DCC.FraudDection
     public class MockDetection
     {
         private readonly SignalRRepo hubRepo;
-        IRavenDbAccess<FraudUIAlerts> _raven;
-        public MockDetection(IConfiguration _configuration, IRavenDbAccess<FraudUIAlerts> raven)
+        public MockDetection(IConfiguration _configuration)
         {
             hubRepo = new SignalRRepo(_configuration);
-
-            _raven = raven;
         }
 
-        public void SetupMockData()
+        //todo:send the fake Data
+        public IList<FraudUIAlerts> GetAlerts()
         {
-            List<FraudUIAlerts> items = GetMockData();
-            foreach (var item in items)
-            {
-                item.id = item.AlertUxID.ToString();
-                _raven.AddItem(item);
-            }
-        }
-
-        public List<FraudUIAlerts> GetMockData()
-        {
-            return new List<FraudUIAlerts> {
+            var items = new List<FraudUIAlerts> {
                 new FraudUIAlerts
                 {
-                    id = Guid.NewGuid().ToString(),
                     AlertUxID = Guid.NewGuid(),
                     CreatedDate = DateTime.UtcNow.AddMinutes(-20),
                     ETan = "7984765348964",
@@ -47,7 +32,6 @@ namespace DCC.FraudDection
                 },
                 new FraudUIAlerts
                 {
-                    id = Guid.NewGuid().ToString(),
                     AlertUxID = Guid.NewGuid(),
                     CreatedDate = DateTime.UtcNow.AddMinutes(-10),
                     ETan = "4654654",
@@ -59,7 +43,6 @@ namespace DCC.FraudDection
                 },
                 new FraudUIAlerts
                 {
-
                     AlertUxID = Guid.NewGuid(),
                     CreatedDate = DateTime.UtcNow.AddMinutes(-10),
                     ETan = "46541365213",
@@ -71,7 +54,6 @@ namespace DCC.FraudDection
                 },
                 new FraudUIAlerts
                 {
-                    id = Guid.NewGuid().ToString(),
                     AlertUxID = Guid.NewGuid(),
                     CreatedDate = DateTime.UtcNow.AddMinutes(-5),
                     ETan = "sdahdshlaslads",
@@ -82,11 +64,6 @@ namespace DCC.FraudDection
                     Timestamp = DateTime.UtcNow.AddMinutes(-5)
                 }
             };
-        }
-
-        public IList<FraudUIAlerts> GetAlerts()
-        {
-            var items =_raven.GetAllItems();
             return items;
         }
 
@@ -96,12 +73,9 @@ namespace DCC.FraudDection
         //Todo: send the remove alert
         public void SetFraudStatus(Guid uxId, string currentUser, bool isFraud)
         {
-            FraudUIAlerts alert = new FraudUIAlerts { AgentAssigned = currentUser, AlertUxID = uxId, id=uxId.ToString(), FraudTransaction = isFraud};
             if (isFraud)
             {
                 Debug.WriteLine($"alert id:{uxId} was marked as fraud by {currentUser}");
-
-                _raven.Update(alert);
             }
             else
             {
